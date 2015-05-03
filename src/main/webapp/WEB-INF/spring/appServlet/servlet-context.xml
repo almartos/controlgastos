@@ -29,8 +29,8 @@
 		destroy-method="close">
 		<beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<beans:property name="url"
-			value="jdbc:mysql://localhost:3306/controlgastos" />
-		<beans:property name="username" value="root" />
+			value="jdbc:mysql://192.168.1.120:3306/controlgastos" />
+		<beans:property name="username" value="alberto" />
 		<beans:property name="password" value="48621440" />
 	</beans:bean>
 
