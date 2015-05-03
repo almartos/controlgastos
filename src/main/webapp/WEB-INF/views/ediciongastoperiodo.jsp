@@ -16,7 +16,7 @@
 
 function pulsadoApunte(idGasto){
 	
-	window.open('http://localhost:8080/ControlGastos/listarapuntesasociadogasto/'+idGasto,'','height=690,width=800,scrollbars=no,top=80,left=90');
+	window.open('/ControlGastos/listarapuntesasociadogasto/'+idGasto,'','height=690,width=800,scrollbars=no,top=80,left=90');
 }
 
 function pulsadoCerrar(){

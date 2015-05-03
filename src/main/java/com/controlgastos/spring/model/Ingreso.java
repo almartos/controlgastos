@@ -34,6 +34,9 @@ public class Ingreso {
 	@Column(name="id_ingreso_global")
 	private int idIngresoGlobal;
 	
+	@Column(name="acumulado_historico")
+	private float acumuladoHistorico;
+	
 
 	public int getId() {
 		return id;
@@ -75,8 +78,16 @@ public class Ingreso {
 		this.idIngresoGlobal=idIngresoGlobal;
 	}
 	
+	public float getAcumuladoHistorico(){
+		return acumuladoHistorico;
+	}
+	
+	public void setAcumuladoHistorico(float acumuladoHistorico){
+		this.acumuladoHistorico=acumuladoHistorico;
+	}
+	
 	@Override
 	public String toString(){
-		return "id="+id+", nombreIngreso="+nombreIngreso+", importeIngreso="+importeIngreso+", fijo="+fijo+", idIngresoGlobal="+idIngresoGlobal;
+		return "id="+id+", nombreIngreso="+nombreIngreso+", importeIngreso="+importeIngreso+", fijo="+fijo+", idIngresoGlobal="+idIngresoGlobal+", acumuladoHistorico="+acumuladoHistorico;
 	}
 }

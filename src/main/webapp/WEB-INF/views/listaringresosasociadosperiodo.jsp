@@ -20,11 +20,11 @@ function pulsadoCerrar(){
 }
 
 function editarIngreso(id){
-	window.open('http://localhost:8080/ControlGastos/editaringresoperiodo/'+id,'','height=690,width=800,scrollbars=no,top=80,left=90');
+	window.open('/ControlGastos/editaringresoperiodo/'+id,'','height=690,width=800,scrollbars=no,top=80,left=90');
 }
 
 function pulsadoNuevoIngreso(){
-	window.open('http://localhost:8080/ControlGastos/nuevoingresoperiodo/'+idIngresoGlobal,'','height=690,width=800,scrollbars=no,top=80,left=90');
+	window.open('/ControlGastos/nuevoingresoperiodo/'+idIngresoGlobal,'','height=690,width=800,scrollbars=no,top=80,left=90');
 	
 	
 }
@@ -43,17 +43,40 @@ function pulsadoNuevoIngreso(){
 	<tr>
 		<th width="80">Ingreso ID</th>
 		<th width="120">Nombre</th>
+		<th width="120">Fijo</th>
 		<th width="120">Importe</th>
 		<th width="120">Editar</th>
 		<th width="120">Borrar</th>
+		<th width="120">Balance</th>
 	</tr>
 	<c:forEach items="${listIngreso}" var="Ingreso">
 		<tr>
 			<td><input type="checkbox" name="${Ingreso.id}" value="${Ingreso.id}" ></td>
 			<td>${Ingreso.nombreIngreso}</td>
-			<td>${Ingreso.importeIngreso}</td>
+			
+			<td>
+			<c:choose>		
+			<c:when test="${Ingreso.fijo==true}">Si</c:when>
+			<c:when test="${Ingreso.fijo==false}">No</c:when> 
+			</c:choose> 
+			</td>
+			
+			<td>
+			<c:choose>		
+			<c:when test="${Ingreso.fijo==true}">${Ingreso.importeIngreso}</c:when>
+			<c:when test="${Ingreso.fijo==false}">${Ingreso.importeIngreso} / ${Ingreso.acumuladoHistorico}</c:when> 
+			</c:choose> 
+			</td>
+			
 			<td><a href="javascript:editarIngreso(${Ingreso.id})" >Editar ingreso</a></td>
-			<td><a href="<c:url value='/borraringresoperiodo/${Ingreso.id}' />" >Borrar ingreso</a></td>
+			<td><a href="/ControlGastos/borraringresoperiodo/${Ingreso.id}" >Borrar ingreso</a></td>
+			
+			<c:choose>		
+			<c:when test="${Ingreso.importeIngreso > Ingreso.acumuladoHistorico}"><td style="background: #66FF33"></td></c:when>
+			<c:when test="${Ingreso.importeIngreso == Ingreso.acumuladoHistorico}"><td style="background: #FFFF00"></td></c:when>
+			<c:when test="${Ingreso.importeIngreso < Ingreso.acumuladoHistorico}"><td style="background: #FF3300"></td></c:when> 
+			</c:choose>
+			
 			
 			<script>var idIngresoGlobal=${Ingreso.idIngresoGlobal};</script>
 
@@ -61,16 +84,23 @@ function pulsadoNuevoIngreso(){
 	</c:forEach>
 	</table>
 </c:if>
+
 <table class="tg">
 	<tr>
 		<th width="80"></th>
-		<th width="80">Total</th>
-		
+		<th width="120">Totales</th>
 	</tr>
 	<tr>
-		<td>Ingresos</td>
+		<td>Presupuestado</td>
+		<td>${totalPresupuestado}</td>
+	</tr>
+	
+	<tr>
+		<td>Ingreso real</td>
 		<td>${totalIngresos}</td>
 	</tr>
+	
+	
 	</table>
 </form:form>
 <td><a href="javascript:pulsadoCerrar()" >Cerrar</a></td>

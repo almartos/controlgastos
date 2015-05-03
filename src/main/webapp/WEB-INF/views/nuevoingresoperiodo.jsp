@@ -14,12 +14,12 @@
 </head>
 <script type="text/javascript">
 function editarIngresos(periodoId){
-	window.open('http://localhost:8080/ControlGastos/listaringresoasociadoperiodo/'+periodoId,'','height=690,width=800,scrollbars=no,top=80,left=90');
+	window.open('/ControlGastos/listaringresoasociadoperiodo/'+periodoId,'','height=690,width=800,scrollbars=no,top=80,left=90');
 }
 
 function editarGastos(periodoId){
 	
-	window.open('http://localhost:8080/ControlGastos/listargastoasociadoperiodo/'+periodoId,'','height=690,width=800,scrollbars=no,top=80,left=90');
+	window.open('/ControlGastos/listargastoasociadoperiodo/'+periodoId,'','height=690,width=800,scrollbars=no,top=80,left=90');
 }
 
 function pulsadoCerrar(){

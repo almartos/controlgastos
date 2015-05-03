@@ -20,7 +20,7 @@ function pulsadoCerrar(){
 }
 
 function editarGasto(id){
-	window.open('http://localhost:8080/ControlGastos/editargastoperiodo/'+id,'','height=690,width=800,scrollbars=no,top=80,left=90');
+	window.open('/ControlGastos/editargastoperiodo/'+id,'','height=690,width=800,scrollbars=no,top=80,left=90');
 }
 
 function nuevaLinea(){

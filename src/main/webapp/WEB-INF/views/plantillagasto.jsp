@@ -18,7 +18,7 @@ function nuevaPlantilla(){
 	
 	
 	
-	window.open('http://localhost:8080/ControlGastos/listargasto','','height=690,width=800,scrollbars=no,top=80,left=90');
+	window.open('/ControlGastos/listargasto','','height=690,width=800,scrollbars=no,top=80,left=90');
 }
 
 </script>

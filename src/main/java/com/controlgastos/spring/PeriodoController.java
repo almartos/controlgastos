@@ -177,7 +177,7 @@ public class PeriodoController {
     			histIng = new HistoricoIngreso();
     			histIng.setIdIngreso(ing.getId());
     			histIng.setFechaIngreso(per.getFechaIni());
-    			histIng.setConceptoIngreso("Inicialización "+ing.getNombreIngreso());
+    			histIng.setConceptoIngreso("Inicializacion "+ing.getNombreIngreso());
     			histIng.setImporteIngreso(Float.parseFloat("0"));
     			this.historicoIngresoService.addHistoricoIngreso(histIng);
     			
@@ -194,7 +194,7 @@ public class PeriodoController {
     			histGast = new HistoricoGasto();
     			histGast.setIdGasto(gas.getId());
     			histGast.setFechaGasto(per.getFechaIni());
-    			histGast.setConceptoGasto("Inicialización "+gas.getNombreGasto());
+    			histGast.setConceptoGasto("Inicializacion "+gas.getNombreGasto());
     			histGast.setImporteGasto(Float.parseFloat("0"));
     			this.historicoGastoService.addHistoricoGasto(histGast);
     			
@@ -250,16 +250,27 @@ public class PeriodoController {
     @RequestMapping(value= "/listaringresoasociadoperiodo/{id}", method = RequestMethod.GET)
 	public String listarIngresoAsociadoPeriodo(@PathVariable("id") int id, Model model){
 		
-		float totalIngreso=0;
+    	float totalIngreso=0;
+		float totalPresupuestado=0;
 		
 		Periodo per = this.periodoService.getPeriodoById(id);
 		
+    	List<Ingreso> ingresoAux = this.ingresoService.listIngresoByIdIngGlobal(id);
+    	
 		
-		
-		List<Ingreso> ingresoAux = this.ingresoService.listIngresoByIdIngGlobal(id);
-		
-		for(int i=0; i<ingresoAux.size();i++){
-			totalIngreso+=ingresoAux.get(i).getImporteIngreso();
+		for(int i =0; i<ingresoAux.size();i++){
+			
+			//para gastos fijos
+			if(ingresoAux.get(i).getFijo() == true){
+				totalIngreso+=ingresoAux.get(i).getImporteIngreso();
+				totalPresupuestado+=ingresoAux.get(i).getImporteIngreso();
+			}
+			
+			else{
+				totalPresupuestado+=ingresoAux.get(i).getImporteIngreso();
+				totalIngreso+=ingresoAux.get(i).getAcumuladoHistorico();
+			}
+			
 		}
 		
 		per.setIngresosPeriodo(totalIngreso);
@@ -268,7 +279,10 @@ public class PeriodoController {
 		
 		model.addAttribute("listIngreso",this.ingresoService.listIngresoByIdIngGlobal(id));
 		model.addAttribute("totalIngresos",totalIngreso);
+		model.addAttribute("totalPresupuestado",totalPresupuestado);
+		
 		return "listaringresosasociadosperiodo";
+
 		
 	}
     
@@ -428,7 +442,7 @@ public class PeriodoController {
     	}
     	
     	model.addAttribute("historicoIngreso", new HistoricoIngreso());
-    	model.addAttribute("listApunteAsociadoIngres",this.historicoIngresoService.listHistoricoIngresoPorIdIngreso(id));
+    	model.addAttribute("listApunteAsociadoIngreso",this.historicoIngresoService.listHistoricoIngresoPorIdIngreso(id));
     	model.addAttribute("totalIngreso",totalIngreso);
     	model.addAttribute("importeIngreso",this.ingresoService.getIngresoById(id).getImporteIngreso());
     	model.addAttribute("nombreIngreso",this.ingresoService.getIngresoById(id).getNombreIngreso());
@@ -464,6 +478,34 @@ public class PeriodoController {
     	return "redirect:/listarapuntesasociadogasto/"+histGast.getIdGasto();
     }
     
+    @RequestMapping(value="/nuevoapunteingreso",method = RequestMethod.POST)
+    public String addApunteHistoricoIngreso(HttpServletRequest request, Model model){
+    	
+    	    	
+    	SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+  
+    	HistoricoIngreso histIng = new HistoricoIngreso();
+    	Ingreso ingreso = this.ingresoService.getIngresoById(Integer.parseInt(request.getParameter("idIngreso")))	;
+    	
+    	
+    	try{
+    		
+    		histIng.setFechaIngreso(formato.parse(request.getParameter("fechaIngreso")));
+    		histIng.setConceptoIngreso(request.getParameter("conceptoIngreso"));
+    		histIng.setImporteIngreso(Float.parseFloat(request.getParameter("importeIngreso")));
+    		histIng.setIdIngreso(Integer.parseInt(request.getParameter("idIngreso")));
+    		this.historicoIngresoService.addHistoricoIngreso(histIng);
+    		ingreso.setAcumuladoHistorico(Float.parseFloat(request.getParameter("acumuladoHistorico"))+Float.parseFloat(request.getParameter("importeIngreso")));
+    		this.ingresoService.updateIngreso(ingreso);
+    		
+    	}
+    	catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	    	
+    	return "redirect:/listarapuntesasociadoingreso/"+histIng.getIdIngreso();
+    }
+    
     @RequestMapping("/eliminarlineahistoricogasto/{id}")
     public String eliminarApunteHistoricoGasto(@PathVariable("id") int id){
     	
@@ -480,5 +522,20 @@ public class PeriodoController {
     	return "redirect:/listarapuntesasociadogasto/"+aux;
     }
 	
+    @RequestMapping("/eliminarlineahistoricoingreso/{id}")
+    public String eliminarApunteHistoricoIngreso(@PathVariable("id") int id){
+    	
+    	int aux = this.historicoIngresoService.getHistoricoIngresoById(id).getIdIngreso();
+    	
+    	Ingreso ingreso =this.ingresoService.getIngresoById(aux);
+    	
+    	ingreso.setAcumuladoHistorico(ingreso.getAcumuladoHistorico() - this.historicoIngresoService.getHistoricoIngresoById(id).getImporteIngreso());
+    	this.ingresoService.updateIngreso(ingreso);
+    	
+    	
+    	this.historicoIngresoService.removeHistoricoIngreso(id);
+    	
+    	return "redirect:/listarapuntesasociadoingreso/"+aux;
+    }
 	
 }

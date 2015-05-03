@@ -13,13 +13,9 @@
 	</style>
 </head>
 <script type="text/javascript">
-function editarIngresos(periodoId){
-	window.open('http://localhost:8080/ControlGastos/listaringresoasociadoperiodo/'+periodoId,'','height=690,width=800,scrollbars=no,top=80,left=90');
-}
-
-function editarGastos(periodoId){
+function pulsadoApunte(idIngreso){
 	
-	window.open('http://localhost:8080/ControlGastos/listargastoasociadoperiodo/'+periodoId,'','height=690,width=800,scrollbars=no,top=80,left=90');
+	window.open('/ControlGastos/listarapuntesasociadoingreso/'+idIngreso,'','height=690,width=800,scrollbars=no,top=80,left=90');
 }
 
 function pulsadoCerrar(){
@@ -98,6 +94,11 @@ function pulsadoCerrar(){
 					value="<spring:message text="Editar Ingreso"/>" />
 			</c:if>
 		</td>
+		
+		<c:choose>		
+			<c:when test="${ingreso.fijo==false}"><td><a href="javascript: pulsadoApunte(${ingreso.id});" >Apunte</a></td></c:when>
+			<c:when test="${ingreso.fijo==true}"><td></td></c:when> 
+		</c:choose>
 	</tr>
 </table>	
 </form:form>
